@@ -1,4 +1,4 @@
-import { Icon } from "lucide-react";
+import { LucideIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
@@ -13,7 +13,7 @@ interface HeadingProps {
 export const Heading = ({
   title,
   description,
-  icon: Icon,
+  icon: LucideIcon,
   iconColor,
   bgColor,
 }: HeadingProps) => {
