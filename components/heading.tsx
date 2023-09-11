@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 interface HeadingProps {
   title: string;
   description: string;
-  icon: Icon;
+  icon: LucideIcon;
   iconColor?: string;
   bgColor?: string;
 }
@@ -13,7 +13,7 @@ interface HeadingProps {
 export const Heading = ({
   title,
   description,
-  icon: LucideIcon,
+  icon: Icon,
   iconColor,
   bgColor,
 }: HeadingProps) => {
