@@ -1,4 +1,4 @@
-import { Code, ImageIcon, MessageSquare, Music, VideoIcon } from "lucide-react";
+import { Code, ImageIcon, MessageSquare,  VideoIcon, Edit} from "lucide-react";
 
 export const MAX_FREE_COUNTS = 10;
 
@@ -11,10 +11,10 @@ export const tools = [
     bgColor: "bg-violet-500/10",
   },
   {
-    label: 'Music Generation',
-    icon: Music,
-    href: '/music',
-    color: "text-emerald-500",
+    label: 'Anti Ai Detection',
+    icon: Edit,
+    href: '/text-writer',
+    color: "text-blue-500",
     bgColor: "bg-emerald-500/10",
   },
   {

@@ -14,11 +14,11 @@ const tools =[
         href: "/conversation"
 
     },
-       { label: "Music Generation",
+       { label: "Anti AI Detection Text Writer",
         icon: Music,
-        color: "text-emerald-500",
-        bgColor: "bg-emerald-500/10",
-        href: "/music"
+        color: "text-blue-500",
+        bgColor: "bg-blue-500/10",
+        href: "/text-writer"
 
     },
         {label: "Image Generation",

@@ -44,7 +44,7 @@ export async function POST(
     }
 
     const response = await openai.createChatCompletion({
-      model: "gpt-3.5-turbo",
+      model: "gpt-4-0125-preview",
       messages: [instructionMessage, ...messages]
     });
 
