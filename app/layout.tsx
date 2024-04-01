@@ -15,7 +15,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Esifi',
-  description: 'AI software',
+  description: 'Most Advance AI software',
 }
 
 export default async function RootLayout({

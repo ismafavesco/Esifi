@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Montserrat } from 'next/font/google'
-import { Code, ImageIcon, LayoutDashboard, MessageSquare, Edit, Settings, VideoIcon } from "lucide-react";
+import { Code, LayoutDashboard, MessageSquare, Edit, Settings, Mic } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 import { cn } from "@/lib/utils";
@@ -30,6 +30,13 @@ const routes = [
     href: '/text-writer',
     color: "text-blue-500",
     bgColor: "bg-emerald-500/10",
+  },
+  {
+    label: 'Text To Speech',
+    icon: Mic ,
+    color: "text-orange-700",
+    bgColor: "bg-orange-700/10",
+    href: '/speech',
   },
  
   {

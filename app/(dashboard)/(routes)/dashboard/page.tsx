@@ -2,7 +2,7 @@
 
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { ArrowRight, Code, ImageIcon, MessageSquare, Music, VideoIcon } from "lucide-react";
+import { ArrowRight, Code, ImageIcon, MessageSquare, Music, Mic } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 const tools =[
@@ -28,13 +28,15 @@ const tools =[
         href: "/image"
 
     },
-        {label: "Video Generation",
-        icon: VideoIcon,
+    {
+        label: 'Text To Speech',
+        icon: Mic ,
         color: "text-orange-700",
         bgColor: "bg-orange-700/10",
-        href: "/video"
+        href: '/speech',
+      },
 
-    },
+    ,
         {label: "Code Generation",
         icon: Code,
         color: "text-green-700",

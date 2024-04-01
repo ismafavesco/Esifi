@@ -46,7 +46,7 @@ export async function GET() {
               name: "Esifi Pro",
               description: "Unlimited AI Generations"
             },
-            unit_amount: 500,
+            unit_amount: 1000,
             recurring: {
               interval: "month"
             }

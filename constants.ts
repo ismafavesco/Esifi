@@ -1,6 +1,6 @@
-import { Code, ImageIcon, MessageSquare,  VideoIcon, Edit} from "lucide-react";
+import { Code, ImageIcon, MessageSquare,Mic ,  Edit, } from "lucide-react";
 
-export const MAX_FREE_COUNTS = 10;
+export const MAX_FREE_COUNTS = 5;
 
 export const tools = [
   {
@@ -15,7 +15,7 @@ export const tools = [
     icon: Edit,
     href: '/text-writer',
     color: "text-blue-500",
-    bgColor: "bg-emerald-500/10",
+    bgColor: "bg-blue-500/10",
   },
   {
     label: 'Image Generation',
@@ -25,11 +25,11 @@ export const tools = [
     href: '/image',
   },
   {
-    label: 'Video Generation',
-    icon: VideoIcon,
+    label: 'Text To Speech',
+    icon: Mic ,
     color: "text-orange-700",
     bgColor: "bg-orange-700/10",
-    href: '/video',
+    href: '/speech',
   },
   {
     label: 'Code Generation',
