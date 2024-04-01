@@ -59,8 +59,7 @@ const DashboardPage =() =>{
             Explore the power of AI
          </h2>
         <p className=" text-muted-foreground fpnt-light text-sm md:text-lg text-center">
-            Chat with the smartest AI - 
-            By Ismael Favela
+            Chat with the smartest AI and see the potential it has
 
         </p>
 
