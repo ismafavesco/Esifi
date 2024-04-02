@@ -25,18 +25,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 var isInstagram = (ua.indexOf('Instagram') > -1) ? true : false;
 
                 if (isInstagram) {
-                  var link = document.createElement('a');
-                  link.href = 'https://www.esifi-ai.com';
-                  link.target = '_blank';
-                  link.innerHTML = 'Open in External Browser';
-                  link.style.display = 'block';
-                  link.style.textAlign = 'center';
-                  link.style.padding = '10px';
-                  link.style.backgroundColor = '#f2f2f2';
-                  link.style.color = '#333';
-                  link.style.textDecoration = 'none';
-                  link.style.fontWeight = 'bold';
-                  document.body.insertBefore(link, document.body.firstChild);
+                  if (/iPad|iPhone|iPod/.test(ua)) {
+                    window.location.href = 'x-web-search://esifi-ai.com';
+                  } else {
+                    window.location.href = 'intent:https://yourwebsite.com#Intent;end';
+                  }
                 }
               `,
             }}
