@@ -18,7 +18,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
         <head>
-          <meta name="apple-mobile-web-app-capable" content="yes" />
           <script
             dangerouslySetInnerHTML={{
               __html: `
@@ -27,7 +26,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
                 if (isInstagram) {
                   if (/iPad|iPhone|iPod/.test(ua)) {
-                    window.location.href = 'https://esifi-ai.com';
+                    window.location.href = 'x-web-search://?esifi-ai.com';
                   } else {
                     window.location.href = 'intent://esifi-ai.com#Intent;end';
                   }
