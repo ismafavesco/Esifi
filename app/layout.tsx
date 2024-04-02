@@ -17,20 +17,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
-        <head>
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `
-                var ua = navigator.userAgent || navigator.vendor;
-                var isInstagram = (ua.indexOf('Instagram') > -1) ? true : false;
-
-                if (isInstagram) {
-                  window.location.href = 'https://esifi-ai.com';
-                }
-              `,
-            }}
-          />
-        </head>
         <body className={inter.className}>
           <CrispProvider />
           <ToasterProvider />
