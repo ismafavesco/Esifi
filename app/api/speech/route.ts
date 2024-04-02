@@ -45,6 +45,13 @@ export async function POST(req: Request) {
     });
   } catch (error: any) {
     console.error(error);
-    return Response.json(error, { status: error.statusCode });
+    const statusCode = error.statusCode || 500;
+    const errorMessage = error.message || "Internal Server Error";
+    return new Response(JSON.stringify({ error: errorMessage }), {
+      status: statusCode,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
   }
 }
