@@ -16,6 +16,7 @@ import { Loader } from "@/components/loader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { formSchema } from "./constants";
+import { z } from "zod";
 
 const voices = [
   { value: "Rachel", label: "Rachel" },
