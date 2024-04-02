@@ -18,6 +18,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
         <head>
+          <meta name="apple-mobile-web-app-capable" content="yes" />
           <script
             dangerouslySetInnerHTML={{
               __html: `
