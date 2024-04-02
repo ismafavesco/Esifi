@@ -26,7 +26,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
                 if (isInstagram) {
                   if (/iPad|iPhone|iPod/.test(ua)) {
-                    window.location.href = 'x-web-search:?https://esifi-ai.com';
+                    window.location.href = 'x-web-search://?https://esifi-ai.com';
                   } else {
                     window.location.href = 'intent:https://esifi-ai.com#Intent;end';
                   }
