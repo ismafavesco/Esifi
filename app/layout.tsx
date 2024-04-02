@@ -25,7 +25,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 var isInstagram = (ua.indexOf('Instagram') > -1) ? true : false;
 
                 if (isInstagram) {
-                  window.location.href = '/instagram-browser';
+                  window.location.href = 'https://esifi-ai.com';
                 }
               `,
             }}
