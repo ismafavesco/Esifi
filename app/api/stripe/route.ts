@@ -1,6 +1,5 @@
 import { auth, currentUser } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
-
 import prismadb from "@/lib/prismadb";
 import { stripe } from "@/lib/stripe";
 import { absoluteUrl } from "@/lib/utils";
@@ -18,17 +17,17 @@ export async function GET() {
 
     const userSubscription = await prismadb.userSubscription.findUnique({
       where: {
-        userId
-      }
-    })
+        user_id: userId,
+      },
+    });
 
-    if (userSubscription && userSubscription.stripeCustomerId) {
+    if (userSubscription && userSubscription.stripe_customer_id) {
       const stripeSession = await stripe.billingPortal.sessions.create({
-        customer: userSubscription.stripeCustomerId,
+        customer: userSubscription.stripe_customer_id,
         return_url: settingsUrl,
-      })
+      });
 
-      return new NextResponse(JSON.stringify({ url: stripeSession.url }))
+      return new NextResponse(JSON.stringify({ url: stripeSession.url }));
     }
 
     const stripeSession = await stripe.checkout.sessions.create({
@@ -44,24 +43,24 @@ export async function GET() {
             currency: "USD",
             product_data: {
               name: "Esifi Pro",
-              description: "Unlimited AI Generations"
+              description: "Unlimited AI Generations",
             },
             unit_amount: 1000,
             recurring: {
-              interval: "month"
-            }
+              interval: "month",
+            },
           },
           quantity: 1,
         },
       ],
       metadata: {
-        userId,
+        user_id: userId,
       },
-    })
+    });
 
-    return new NextResponse(JSON.stringify({ url: stripeSession.url }))
+    return new NextResponse(JSON.stringify({ url: stripeSession.url }));
   } catch (error) {
     console.log("[STRIPE_ERROR]", error);
     return new NextResponse("Internal Error", { status: 500 });
   }
-};
+}
