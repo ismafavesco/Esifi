@@ -30,8 +30,9 @@ export async function POST(req: Request) {
       voice,
       model_id: "eleven_multilingual_v2",
       voice_settings: {
-        similarity_boost: 0.5,
-        stability: 0.5,
+        similarity_boost: .5,
+        stability: 0.6,
+        style: 0.1
       },
       text: message,
     });

@@ -1,7 +1,6 @@
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 import { Configuration, OpenAIApi } from "openai";
-
 import { checkSubscription } from "@/lib/subscription";
 import { incrementApiLimit, checkApiLimit } from "@/lib/api-limit";
 
@@ -11,9 +10,7 @@ const configuration = new Configuration({
 
 const openai = new OpenAIApi(configuration);
 
-export async function POST(
-  req: Request
-) {
+export async function POST(req: Request) {
   try {
     const { userId } = auth();
     const body = await req.json();
@@ -46,8 +43,11 @@ export async function POST(
       return new NextResponse("Free trial has expired. Please upgrade to pro.", { status: 403 });
     }
 
+    // Establish a prompt for high-quality and realistic photos
+    const establishedPrompt = `Please generate a high-quality, realistic photo based on the following description: ${prompt}. The photo should have sharp details, accurate colors, and look as close to a real-life photograph as possible.`;
+
     const response = await openai.createImage({
-      prompt,
+      prompt: establishedPrompt,
       n: parseInt(amount, 10),
       size: resolution,
     });
@@ -58,7 +58,7 @@ export async function POST(
 
     return NextResponse.json(response.data.data);
   } catch (error) {
-    console.log('[IMAGE_ERROR]', error);
+    console.log("[IMAGE_ERROR]", error);
     return new NextResponse("Internal Error", { status: 500 });
   }
-};
+}

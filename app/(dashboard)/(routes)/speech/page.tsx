@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -24,13 +24,14 @@ const voices = [
   { value: "Chris", label: "Chris" },
   { value: "Adam", label: "Adam" },
   { value: "Ethan", label: "Ethan" },
-  { value: "James", label: "James" },
+  { value: "Sarah", label: "Sarah" },
 ];
 
 const SpeechToTextPage = () => {
   const router = useRouter();
   const [audioUrl, setAudioUrl] = useState("");
   const [voice, setVoice] = useState("Adam");
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const { register, handleSubmit, formState } = useForm({
     resolver: zodResolver(formSchema),
@@ -49,8 +50,8 @@ const SpeechToTextPage = () => {
       });
 
       const audioBlob = new Blob([response.data], { type: "audio/mpeg" });
-      const audioUrl = URL.createObjectURL(audioBlob);
-      setAudioUrl(audioUrl);
+      const newAudioUrl = URL.createObjectURL(audioBlob);
+      setAudioUrl(newAudioUrl);
     } catch (error) {
       console.error("Error generating speech:", error);
       toast.error("Something went wrong.");
@@ -62,6 +63,12 @@ const SpeechToTextPage = () => {
   const handleVoiceChange = (value: string) => {
     setVoice(value);
   };
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.load();
+    }
+  }, [audioUrl]);
 
   return (
     <div className="container mx-auto py-8">
@@ -112,13 +119,13 @@ const SpeechToTextPage = () => {
 
             <div className="flex justify-end">
               <Button type="submit" disabled={formState.isSubmitting}>
-                {formState.isSubmitting ? <Loader  /> : null}
                 Generate
               </Button>
             </div>
           </form>
         </CardContent>
       </Card>
+      {formState.isSubmitting ? <Loader /> : null}
 
       {audioUrl && (
         <Card className="mt-8">
@@ -126,7 +133,7 @@ const SpeechToTextPage = () => {
             <CardTitle>Generated Speech</CardTitle>
           </CardHeader>
           <CardContent>
-            <audio controls className="w-full">
+            <audio ref={audioRef} controls className="lg:w-full">
               <source src={audioUrl} type="audio/mpeg" />
               Your browser does not support the audio element.
             </audio>
