@@ -66,7 +66,7 @@ const TextWriterPage = () => {
     <div>
       <Heading
         title="Anti AI Detection Text Writer"
-        description="Turn your prompt into humanized text and anti ai detection. (Max 500 words output)"
+        description="Turn your Text into better quality writing and anti Ai detection. (Max 500 words output)"
         icon={Edit}
         iconColor="text-blue-500"
         bgColor="bg-blue-500/10"
@@ -97,7 +97,7 @@ const TextWriterPage = () => {
                     <Input
                       className="border-0   "
                       disabled={isLoading}
-                      placeholder="Write a short story about a robot learning to love."
+                      placeholder="Paste your text here. (500 Words Max) "
                       {...field}
                     />
                   </FormControl>
