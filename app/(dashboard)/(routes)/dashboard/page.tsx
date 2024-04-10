@@ -39,6 +39,7 @@ const DashboardPage = () => {
         bgColor: "bg-orange-700/10",
         href: "/speech",
       },
+     
       {
         label: "Code Generation",
         icon: Code,

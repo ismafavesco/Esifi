@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import { MessageSquare } from "lucide-react";
+import { MessageSquare, Mic, Upload } from "lucide-react";
 
 import { Heading } from "@/components/heading";
 import { Button } from "@/components/ui/button";
@@ -29,9 +29,17 @@ const voices = [
 
 const SpeechToTextPage = () => {
   const router = useRouter();
-  const [audioUrl, setAudioUrl] = useState("");
+  const [outputAudioUrl, setOutputAudioUrl] = useState("");
   const [voice, setVoice] = useState("Adam");
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [inputMode, setInputMode] = useState("text");
+  const [recording, setRecording] = useState(false);
+  const [audioFile, setAudioFile] = useState<File | null>(null);
+  const [audioUrl, setAudioUrl] = useState("");
+  const [frequency, setFrequency] = useState(0);
+  const outputAudioRef = useRef<HTMLAudioElement | null>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const chunksRef = useRef<Blob[]>([]);
+  const animationFrameRef = useRef<number | null>(null);
 
   const { register, handleSubmit, formState } = useForm({
     resolver: zodResolver(formSchema),
@@ -42,16 +50,27 @@ const SpeechToTextPage = () => {
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
-      const response = await axios.post("/api/speech", {
-        message: data.text,
-        voice,
-      }, {
+      const formData = new FormData();
+      formData.append("voice", voice);
+
+      if (inputMode === "text") {
+        formData.append("text", data.text);
+      } else if (inputMode === "record") {
+        if (audioFile) {
+          formData.append("audio", audioFile);
+        } else {
+          toast.error("Please record your audio.");
+          return;
+        }
+      }
+
+      const response = await axios.post("/api/speech", formData, {
         responseType: "blob",
       });
 
       const audioBlob = new Blob([response.data], { type: "audio/mpeg" });
       const newAudioUrl = URL.createObjectURL(audioBlob);
-      setAudioUrl(newAudioUrl);
+      setOutputAudioUrl(newAudioUrl);
     } catch (error) {
       console.error("Error generating speech:", error);
       toast.error("Something went wrong.");
@@ -64,17 +83,80 @@ const SpeechToTextPage = () => {
     setVoice(value);
   };
 
-  useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.load();
+  const handleInputModeChange = (mode: string) => {
+    setInputMode(mode);
+    setAudioFile(null);
+    setAudioUrl("");
+    chunksRef.current = [];
+  };
+
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+      chunksRef.current = [];
+
+      mediaRecorder.addEventListener("dataavailable", (event) => {
+        chunksRef.current.push(event.data);
+      });
+
+      mediaRecorder.addEventListener("stop", () => {
+        const audioBlob = new Blob(chunksRef.current, { type: "audio/wav" });
+        const audioFile = new File([audioBlob], "recording.wav", { type: "audio/wav" });
+        setAudioFile(audioFile);
+        setAudioUrl(URL.createObjectURL(audioBlob));
+      });
+
+      const audioContext = new AudioContext();
+      const analyser = audioContext.createAnalyser();
+      const microphone = audioContext.createMediaStreamSource(stream);
+      microphone.connect(analyser);
+
+      const frequencyData = new Uint8Array(analyser.frequencyBinCount);
+
+      const renderFrame = () => {
+        analyser.getByteFrequencyData(frequencyData);
+        const frequency = frequencyData.reduce((sum, value) => sum + value, 0) / frequencyData.length;
+        setFrequency(frequency);
+        animationFrameRef.current = requestAnimationFrame(renderFrame);
+      };
+
+      mediaRecorder.start();
+      setRecording(true);
+      renderFrame();
+    } catch (error) {
+      console.error("Error starting recording:", error);
+      toast.error("Failed to start recording.");
     }
-  }, [audioUrl]);
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+      mediaRecorderRef.current.stop();
+      setRecording(false);
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    }
+  };
+
+  const deleteRecording = () => {
+    setAudioFile(null);
+    setAudioUrl("");
+  };
+
+  useEffect(() => {
+    if (outputAudioRef.current) {
+      outputAudioRef.current.load();
+    }
+  }, [outputAudioUrl]);
 
   return (
     <div className="container mx-auto py-8">
       <Heading
-        title="Text to Speech"
-        description="Convert text into lifelike speech using a variety of voices."
+        title="Speech to Speech"
+        description="Convert speech or text into lifelike speech using a variety of voices."
         icon={MessageSquare}
         iconColor="text-violet-500"
         bgColor="bg-violet-500/10"
@@ -105,17 +187,73 @@ const SpeechToTextPage = () => {
             </div>
 
             <div className="mb-4">
-              <label htmlFor="text" className="block mb-2 text-sm font-medium">
-                Text
-              </label>
-              <Textarea
-                id="text"
-                {...register("text")}
-                placeholder="Enter the text to convert to speech"
-                disabled={formState.isSubmitting}
-                className="h-32"
-              />
+              <label className="block mb-2 text-sm font-medium">Input Mode</label>
+              <div className="flex space-x-4">
+                <Button
+                  type="button"
+                  variant={inputMode === "text" ? "default" : "outline"}
+                  onClick={() => handleInputModeChange("text")}
+                >
+                  Text
+                </Button>
+                <Button
+                  type="button"
+                  variant={inputMode === "record" ? "default" : "outline"}
+                  onClick={() => handleInputModeChange("record")}
+                >
+                  Record Audio
+                </Button>
+              </div>
             </div>
+
+            {inputMode === "text" && (
+              <div className="mb-4">
+                <label htmlFor="text" className="block mb-2 text-sm font-medium">
+                  Text
+                </label>
+                <Textarea
+                  id="text"
+                  {...register("text")}
+                  placeholder="Enter the text to convert to speech"
+                  disabled={formState.isSubmitting}
+                  className="h-32"
+                />
+              </div>
+            )}
+
+            {inputMode === "record" && (
+              <div className="mb-4">
+                <label className="block mb-2 text-sm font-medium">Record Audio</label>
+                <div className="flex items-center space-x-4">
+                  <Button
+                    type="button"
+                    variant={recording ? "destructive" : "default"}
+                    onClick={recording ? stopRecording : startRecording}
+                  >
+                    <Mic className="w-5 h-5 mr-2" />
+                    {recording ? "Stop Recording" : "OUT OF SERVICE (We are Currently working to bring you the best quality.)"}
+                  </Button>
+                  {audioUrl && (
+                    <>
+                      <audio src={audioUrl} controls className="mr-2" />
+                      <Button type="button" variant="outline" onClick={deleteRecording}>
+                        Delete
+                      </Button>
+                    </>
+                  )}
+                </div>
+                {recording && (
+                  <div className="mt-4">
+                    <div className="h-6 bg-gray-300 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-violet-500 transition-all duration-100"
+                        style={{ width: `${(frequency / 255) * 100}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
 
             <div className="flex justify-end">
               <Button type="submit" disabled={formState.isSubmitting}>
@@ -127,16 +265,23 @@ const SpeechToTextPage = () => {
       </Card>
       {formState.isSubmitting ? <Loader /> : null}
 
-      {audioUrl && (
+      {outputAudioUrl && (
         <Card className="mt-8">
           <CardHeader>
             <CardTitle>Generated Speech</CardTitle>
           </CardHeader>
           <CardContent>
-            <audio ref={audioRef} controls className="lg:w-full">
-              <source src={audioUrl} type="audio/mpeg" />
+            <audio ref={outputAudioRef} controls controlsList="nodownload" className="lg:w-full">
+              <source src={outputAudioUrl} type="audio/mpeg" />
               Your browser does not support the audio element.
             </audio>
+            <a
+              href={outputAudioUrl}
+              download="generated_speech.mp3"
+              className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-violet-600 hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500"
+            >
+              Download Audio
+            </a>
           </CardContent>
         </Card>
       )}
