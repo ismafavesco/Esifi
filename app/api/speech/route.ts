@@ -36,8 +36,6 @@ export async function POST(req: Request) {
       : process.env.ELEVENLABS_API_KEY,
   });
 
-
-
   try {
     let audioData;
     if (text) {
@@ -75,15 +73,19 @@ export async function POST(req: Request) {
         })
       );
 
+      const headers = new Headers();
+      headers.append(
+        "xi-api-key",
+        isProduction
+          ? process.env.ELEVENLABS_API_KEY || ""
+          : process.env.ELEVENLABS_API_KEY || ""
+      );
+
       const response = await fetch(
         `https://api.elevenlabs.io/v1/speech-to-speech/${voice}`,
         {
           method: "POST",
-          headers: {
-            "xi-api-key": isProduction
-              ? process.env.ELEVENLABS_API_KEY
-              : process.env.ELEVENLABS_API_KEY,
-          },
+          headers,
           body: formData,
         }
       );
