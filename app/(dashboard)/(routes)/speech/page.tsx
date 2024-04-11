@@ -19,12 +19,12 @@ import { formSchema } from "./constants";
 import { z } from "zod";
 
 const voices = [
-  { value: "Rachel", label: "Rachel" },
-  { value: "Alice", label: "Alice" },
-  { value: "Chris", label: "Chris" },
-  { value: "Adam", label: "Adam" },
-  { value: "Ethan", label: "Ethan" },
-  { value: "Sarah", label: "Sarah" },
+  { value: "21m00Tcm4TlvDq8ikWAM", label: "Rachel" },
+  { value: "Xb7hH8MSUJpSbSDYk0k2", label: "Alice" },
+  { value: "iP95p4xoKVk53GoZ742B", label: "Chris" },
+  { value: "pNInz6obpgDQGcFmaJgB", label: "Adam" },
+  { value: "g5CIjZEefAph4nQFvHAz", label: "Ethan" },
+  { value: "EXAVITQu4vr4xnSDxMaL", label: "Sarah" },
 ];
 
 const SpeechToTextPage = () => {
@@ -223,7 +223,7 @@ const SpeechToTextPage = () => {
 
             {inputMode === "record" && (
               <div className="mb-4">
-                <label className="block mb-2 text-sm font-medium">Record Audio</label>
+                <label className="block mb-2 text-sm font-medium">Record Audio (English)</label>
                 <div className="flex items-center space-x-4">
                   <Button
                     type="button"
@@ -231,7 +231,7 @@ const SpeechToTextPage = () => {
                     onClick={recording ? stopRecording : startRecording}
                   >
                     <Mic className="w-5 h-5 mr-2" />
-                    {recording ? "Stop Recording" : "OUT OF SERVICE (We are Currently working to bring you the best quality.)"}
+                    {recording ? "Stop Recording" : "Start Recording"}
                   </Button>
                   {audioUrl && (
                     <>

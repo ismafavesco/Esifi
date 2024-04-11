@@ -20,7 +20,7 @@ export async function POST(req: Request) {
   }
 
   const formData = await req.formData();
-  const voice = formData.get("voice") as string;
+  const voice = formData.get("voice") as string; // Get the selected voice from the form data
   const text = formData.get("text") as string;
   const audioFile = formData.get("audio") as File;
 
@@ -38,7 +38,9 @@ export async function POST(req: Request) {
 
   try {
     let audioData;
+
     if (text) {
+      // Text-to-Speech
       console.log("Sending request to ElevenLabs API with text:", {
         voice,
         model_id: "eleven_multilingual_v2",
@@ -49,6 +51,7 @@ export async function POST(req: Request) {
         },
         text,
       });
+
       audioData = await elevenlabs.generate({
         voice: voice,
         model_id: "eleven_multilingual_v2",
@@ -60,14 +63,15 @@ export async function POST(req: Request) {
         text: text,
       });
     } else if (audioFile) {
+      // Speech-to-Speech
       const formData = new FormData();
       formData.append("audio", audioFile);
-      formData.append("model_id", "eleven_english_sts_v2");
+      formData.append("model_id", "eleven_multilingual_v2");
       formData.append(
         "voice_settings",
         JSON.stringify({
           similarity_boost: 0.8,
-          stability: 0.5,
+          stability: 0.6,
           style: 0.0,
           use_speaker_boost: true,
         })
@@ -81,15 +85,30 @@ export async function POST(req: Request) {
           : process.env.ELEVENLABS_API_KEY || ""
       );
 
+      const boundary =
+        "----WebKitFormBoundary" + Math.random().toString(16).substring(2);
+      headers.append("Content-Type", `multipart/form-data; boundary=${boundary}`);
+
+      const requestBody = new Blob(
+        [
+          `--${boundary}\r\n`,
+          'Content-Disposition: form-data; name="audio"; filename="recording.wav"\r\n',
+          "Content-Type: audio/wav\r\n\r\n",
+          audioFile,
+          `\r\n--${boundary}--\r\n`,
+        ],
+        { type: "multipart/form-data" }
+      );
+
       const response = await fetch(
         `https://api.elevenlabs.io/v1/speech-to-speech/${voice}`,
         {
           method: "POST",
           headers,
-          body: formData,
+          body: requestBody,
         }
       );
-
+ 
       if (response.ok) {
         audioData = await response.arrayBuffer();
       } else {
