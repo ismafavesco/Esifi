@@ -23,3 +23,10 @@ model UserSubscription {
   stripe_price_id          String?
   stripe_current_period_end DateTime?
 }
+
+model Conversation {
+  id        String   @id @default(cuid())
+  userId    String
+  messages  String
+  createdAt DateTime @default(now())
+}
