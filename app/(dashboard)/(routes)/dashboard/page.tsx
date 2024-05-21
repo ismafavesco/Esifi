@@ -2,7 +2,7 @@
 
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { ArrowRight, Code, ImageIcon, MessageSquare, Music, Mic } from "lucide-react";
+import { ArrowRight, Code, ImageIcon, MessageSquare, Edit, Mic } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 
@@ -20,7 +20,7 @@ const DashboardPage = () => {
       },
       {
         label: "Anti AI Detection Text Writer",
-        icon: Music,
+        icon: Edit,
         color: "text-blue-500",
         bgColor: "bg-blue-500/10",
         href: "/text-writer",

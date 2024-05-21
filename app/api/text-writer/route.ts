@@ -91,7 +91,7 @@ export async function POST(req: Request) {
     }
 
     const response = await openai.createChatCompletion({
-      model: "gpt-4",
+      model: "gpt-4o",
       messages: [
         instructionMessage,
         { role: "user", content: `${content}\n\nMaximum words: ${maxWords}` },

@@ -8,10 +8,7 @@ export const POST = async (request: Request) => {
     const { messages } = await request.json();
 
     if (!userId) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const conversationData = {
@@ -19,16 +16,11 @@ export const POST = async (request: Request) => {
       messages: JSON.stringify(messages),
     };
 
-    await prismadb.conversation.create({
-      data: conversationData,
-    });
+    await prismadb.conversation.create({ data: conversationData });
 
     return NextResponse.json({ message: "Conversation saved successfully" });
   } catch (error) {
     console.error("Error saving conversation:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 };

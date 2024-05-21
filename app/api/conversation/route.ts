@@ -50,7 +50,7 @@ export async function POST(req: Request) {
       }
 
       const response = await openai.createChatCompletion({
-        model: "gpt-4-turbo",
+        model: "gpt-4o",
         messages,
       });
 
@@ -63,28 +63,25 @@ export async function POST(req: Request) {
       console.log("[CONVERSATION_ERROR]", error);
       return new NextResponse("Internal Error", { status: 500 });
     }
-  } else if (pathname === "/api/conversations") {
-    const { userId } = auth();
-    const body = await req.json();
-    const { messages } = body;
-
-    if (!userId) {
-      return new NextResponse("Unauthorized", { status: 401 });
-    }
-
+  } else if (pathname === "/api/conversation/conversations") {
     try {
-      await prismadb.conversation.create({
-        data: {
-          userId,
-          messages: JSON.stringify(messages),
-        },
+      const { userId } = auth();
+      const body = await req.json();
+      const { messages } = body;
+      if (!userId) {
+        return new NextResponse("Unauthorized", { status: 401 });
+      }
+      const conversationData = {
+        userId,
+        messages: JSON.stringify(messages),
+      };
+      await prismadb.conversation.create({ data: conversationData });
+      return new NextResponse("Conversation saved successfully", {
+        status: 200,
       });
-      return new NextResponse("Conversation saved successfully", { status: 200 });
     } catch (error) {
-      console.log("[SAVE_CONVERSATION_ERROR]", error);
+      console.error("Error saving conversation:", error);
       return new NextResponse("Error saving conversation", { status: 500 });
     }
   }
-
-  return new NextResponse("Not Found", { status: 404 });
 }
